@@ -2,7 +2,7 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const Quiz = require('../models/Quiz');
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
 // Helper to strip markdown JSON wrapping if Gemini returns it
 const parseGeminiJson = (text) => {
@@ -112,7 +112,21 @@ const chat = async (req, res) => {
       },
     });
 
-    const result = await chatSession.sendMessage(prompt);
+    let result;
+    let retries = 3;
+    for (let i = 0; i < retries; i++) {
+      try {
+        result = await chatSession.sendMessage(prompt);
+        break;
+      } catch (err) {
+        if ((err.status === 503 || err.status === 429) && i < retries - 1) {
+          console.log(`Chat ${err.status}, retrying in ${3000 * (i + 1)}ms...`);
+          await new Promise(resolve => setTimeout(resolve, 3000 * (i + 1)));
+        } else {
+          throw err;
+        }
+      }
+    }
     const response = await result.response;
     
     res.json({ reply: response.text() });
