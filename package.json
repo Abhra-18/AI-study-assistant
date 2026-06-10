@@ -9,7 +9,7 @@
     "client": "vite",
     "dev": "concurrently \"npm run server:dev\" \"npm run client\"",
     "server:dev": "cd backend && npx nodemon server.js",
-    "build": "npx vite build",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
