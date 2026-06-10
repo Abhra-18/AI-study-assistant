@@ -4,7 +4,7 @@ const pdfParse = require('pdf-parse');
 const Quiz = require('../models/Quiz');
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
 const embeddingModel = genAI.getGenerativeModel({ model: "gemini-embedding-001" });
 
 // Helper to calculate Cosine Similarity between two vectors
